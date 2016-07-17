@@ -15,13 +15,16 @@ router.get('/', function (req, res) {
 });
 
 router.post('/sms', function (req, res) {
-	service.handle(req.body.Body, req.body.From, function () {
-		res.end();
+	service.handle(req.body.Body, req.body.From, function (message) {
+		smsService.sendSms(req.body.From, message, function() {
+			res.end();
+		});		
 	});
 });
 
 router.get("/test", function (req, res) {
-	service.handle(req.query.message, req.query.number, function () {
+	service.handle(req.query.message, req.query.number, function (message) {
+		res.send(message);
 		res.end();
 	});
 });
