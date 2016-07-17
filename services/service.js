@@ -28,7 +28,7 @@ function handle(message, number, callback) {
 
 function handleSms(message, user, callback) {
 
-    var parser = new Parser(message);
+    var parser = new Parser(message); 
     var parsed = parser.parse();
 
     console.log(parsed);
