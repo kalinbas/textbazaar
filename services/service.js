@@ -35,7 +35,11 @@ function handleSms(message, user, callback) {
     switch (parsed.command.toLowerCase()) {
         case "":
         case "?":
+        case "learn":
             handleHelp(parsed.args.primary, user, callback);
+            break;
+        case "commands":
+            handleCommands(user, callback);
             break;
         case "setlocation":
             handleSetLocation(parsed.args.primary, user, callback);
@@ -62,8 +66,8 @@ function handleSms(message, user, callback) {
         case "search":
             handleSearch(parsed, user, callback);
             break;
-        case "userinfo":
-            handleUserInfo(parsed.args.primary, user, callback);
+        case "description":
+            handleDescription(parsed.args.primary, user, callback);
             break;
 
         default:
@@ -220,7 +224,7 @@ function handleRemoveAll(user, callback) {
     });
 }
 
-function handleUserInfo(name, user, callback) {
+function handleDescription(name, user, callback) {
     User.findOne({ 'name': name }, function (err, seller) {
         if (err) console.log(err);
 
@@ -244,6 +248,12 @@ function handleHelp(topic, user, callback) {
             break;
 
     }
+}
+
+function handleCommands(user, callback) {
+
+    //TODO other topics
+    callback("Welcome to textbazaar. You may use the following commands...");
 }
 
 function handleUndefined(user, callback) {
