@@ -31,6 +31,8 @@ function handleSms(message, user, callback) {
     var parser = new Parser(message);
     var parsed = parser.parse();
 
+    console.log(parsed);
+
     switch (parsed.command) {
         case "?":
             handleHelp(parsed.primary, user, callback);
@@ -81,15 +83,15 @@ function handleSell(offer, user, callback) {
     });
 
     offer.save(function (err) {
-        if (err && err.code == 11000) {
-            smsService.sendSms(user.number, "Product already exists..", callback);
-        } else if (err) {
-            console.log(err);
+        if (!err) {
+             callback("Product added..");
         } else {
-            smsService.sendSms(user.number, "Product added..", callback);
-        }
-    });
+            console.log(err);       
 
+            // probably error 11000
+            callback("Product already exists..");            
+        }       
+    });
 }
 
 function updateLocation(user, callback) {
@@ -117,11 +119,11 @@ function handleSetLocation(locationString, user, callback) {
             user.location = locationString;
             user.save(function (err) {
                 updateLocation(user, function () {
-                    smsService.sendSms(user.number, "Location set to " + locationString, callback);
+                    callback("Location set to " + locationString);
                 })
             });
         } else {
-            smsService.sendSms(user.number, "Location could not be found - try again with a different location string", callback);
+            callback("Location could not be found - try again with a different location string");
         }
     });
 }
@@ -129,14 +131,14 @@ function handleSetLocation(locationString, user, callback) {
 function handleSetDescription(description, user, callback) {
     user.description = description;
     user.save(function (err) {
-        smsService.sendSms(user.number, "Description was updated", callback);
+        callback("Description was updated");
     });
 }
 
 function handleSearch(query, user, callback) {
 
     if (!user.location) {
-        smsService.sendSms(user.number, "Before you search you need to set your location with the command: setlocation", callback);
+        callback("Before you search you need to set your location with the command: setlocation");
     } else {
         Offer.find(
             {
@@ -156,9 +158,9 @@ function handleSearch(query, user, callback) {
                     for (var i = 0; i < results.length; i++) {
                         message += results[i].code + " - " + results[i].name + " $" + results[i].price + "\n";
                     }
-                    smsService.sendSms(user.number, message, callback);
+                    callback(message);
                 } else {
-                    smsService.sendSms(user.number, "No results found...", callback);
+                    callback("No results found...");
                 }
             });
     }
@@ -175,9 +177,9 @@ function handleList(user, callback) {
                 for (var i = 0; i < results.length; i++) {
                     message += results[i].name + " $" + results[i].price + "\n";
                 }
-                smsService.sendSms(user.number, message, callback);
+                callback(message);
             } else {
-                smsService.sendSms(user.number, "There are no items in your store.", callback);
+                callback("There are no items in your store.");
             }
         });
 }
@@ -185,14 +187,14 @@ function handleList(user, callback) {
 function handleRemove(name, user, callback) {
     Offer.remove({ userId: user._id, name: name }, function (err) {
         if (err) console.log(err);
-        smsService.sendSms(user.number, "The item " + name + " was removed from your store.", callback);
+        callback("The item " + name + " was removed from your store.");
     });
 }
 
 function handleRemoveAll(user, callback) {
     Offer.remove({ userId: user._id }, function (err) {
         if (err) console.log(err);
-        smsService.sendSms(user.number, "All your items were removed from your store.", callback);
+        callback("All your items were removed from your store.");
     });
 }
 
@@ -201,9 +203,9 @@ function handleUserInfo(code, user, callback) {
         if (err) console.log(err);
 
         if (seller) {
-            smsService.sendSms(user.number, "Phone Number: " + seller.number + "\n" + "Location: " + seller.location + "\n" + seller.description, callback);
+            callback("Phone Number: " + seller.number + "\n" + "Location: " + seller.location + "\n" + seller.description);
         } else {
-            smsService.sendSms(user.number, "Seller with code " + code + " was not found.", callback);
+            callback("Seller with code " + code + " was not found.");
         }
     });
 }
@@ -223,7 +225,7 @@ function handleHelp(topic, user, callback) {
 }
 
 function handleUndefined(user, callback) {
-    smsService.sendSms(user.number, "Sorry I did not understand. Check your command again or use ? to get help.", callback);
+    callback("Sorry I did not understand. Please correct your command or use ? to get help.");
 }
 
 function generateRandomCode() {
@@ -232,7 +234,6 @@ function generateRandomCode() {
         charset: 'alphabetic'
     }).toLowerCase();
 }
-
 
 module.exports = {
     handle: handle

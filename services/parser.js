@@ -1,3 +1,4 @@
+ "use strict";
 class Parser {
   constructor(str) {
     this.str = str.toLowerCase();
@@ -15,7 +16,7 @@ class Parser {
   }
 
   extractCommand() {
-    const endOfCommand = this.str.indexOf(' ')
+    const endOfCommand = this.str.indexOf(' ')    
     this.parsed.command = this.str.slice(0, endOfCommand)
     this.str = this.str.slice(endOfCommand + 1)
   }
