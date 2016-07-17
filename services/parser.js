@@ -1,7 +1,7 @@
  "use strict";
 class Parser {
   constructor(str) {
-    this.str = str.toLowerCase();
+    this.str = str;
     this.reg = /(\w+)([=<>])(\w+|"[^"]*")/g;
     this.parsed = {
       args: {} 
@@ -17,8 +17,14 @@ class Parser {
 
   extractCommand() {
     const endOfCommand = this.str.indexOf(' ')    
-    this.parsed.command = this.str.slice(0, endOfCommand)
-    this.str = this.str.slice(endOfCommand + 1)
+    if (endOfCommand === -1) {
+      this.parsed.command = this.str
+      this.str = ""
+    } 
+    else {
+      this.parsed.command = this.str.slice(0, endOfCommand)
+      this.str = this.str.slice(endOfCommand + 1)
+    }
   }
 
   extractPrimary() {
