@@ -23,10 +23,15 @@ router.post('/sms', function (req, res) {
 });
 
 router.get("/test", function (req, res) {
-	service.handle(req.query.message, req.query.number, function (message) {
-		res.send(message);
+	if (req.query.message && req.query.number) {
+		service.handle(req.query.message, req.query.number, function (message) {
+			res.send(message);
+			res.end();
+		});
+	} else {
+		res.status(400).send('message and number GET parameter needed');
 		res.end();
-	});
+	}
 });
 
 module.exports = router;

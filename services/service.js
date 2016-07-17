@@ -88,7 +88,7 @@ function handleSell(offer, user, callback) {
         } else {
             console.log(err);       
 
-            // probably error 11000
+            // probably error 11000 - better error handling needed
             callback("Product already exists..");            
         }       
     });
