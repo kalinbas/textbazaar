@@ -171,18 +171,42 @@ function handleSetDescription(description, user, callback) {
     });
 }
 
-function handleSearch(query, user, callback) {
+function handleSearch(parsed, user, callback) {
 
     if (!user.location) {
         callback("Before you search you need to set your location with the command: setlocation");
     } else {
+
+        var query = parsed.args.primary;
+
+        // extract override location
+        var overrideLocation = parsed.args["location"] ? parsed.args["location"].value : null;
+
+        // basic search
+        var q = {
+            $text: {
+                $search: query + " " + (overrideLocation || user.location),
+                $language: "none"
+            }
+        };
+
+        // apply custom filters
+        if (parsed.args["price"] && parsed.args["price"].value) {
+            var val = parseFloat(parsed.args["price"].value);
+            if (parsed.args["price"].comparison == "=") {
+                q.price = val;
+            } else if (parsed.args["price"].comparison == "<") {
+                q.price = { $lt: val };
+            } else if (parsed.args["price"].comparison == ">") {
+                q.price = { $gt: val };
+            }
+        }
+        if (parsed.args["seller"]) {
+             q.userName = parsed.args["seller"].value;
+        }
+
         Offer.find(
-            {
-                $text: {
-                    $search: query + " " + user.location, // add location to free text search - TODO do searching based on coordinates
-                    $language: "none"
-                }
-            },
+            q,
             { score: { $meta: "textScore" } })
             .sort({ score: { $meta: "textScore" } })
             .limit(5)
