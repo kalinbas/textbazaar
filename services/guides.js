@@ -2,8 +2,8 @@ function getGuide(topic) {
   switch(topic) {
     case "":
       return (
-`TextBazaar is an online marketplace that works without internet.
-Text "commands" for the list of commands, then "learn <command>" to learn how to use it
+`TextBazaar is the online marketplace that works without the internet.
+Text "commands" for the list of commands, then use "learn <command>" to learn more
 Ex: "learn search"`
       )
 		case "learn":
@@ -14,9 +14,9 @@ Ex: "learn search price"`
       )
     case "commands":
       return (
-`For Buyers: "search" , "viewSeller"
-For Sellers: "sell" , "list" , "remove" , "removeAll", "setName", "setDescription"
-For both: "learn", "setLocation"`
+`- For Buyers: search, viewSeller
+- For Sellers: sell, list, remove, removeAll, setName, setDescription
+- For both: learn, setLocation`
       )
     case "setName":
       return (
