@@ -33,34 +33,38 @@ function handleSms(message, user, callback) {
 
     console.log(parsed);
 
-    switch (parsed.command) {
+    switch (parsed.command.toLowerCase()) {
+        case "":
         case "?":
-            handleHelp(parsed.primary, user, callback);
+            handleHelp(parsed.args.primary, user, callback);
             break;
         case "setlocation":
-            handleSetLocation(parsed.primary, user, callback);
+            handleSetLocation(parsed.args.primary, user, callback);
+            break;
+        case "setname":
+            handleSetName(parsed.args.primary, user, callback);
             break;
         case "setdescription":
-            handleSetDescription(params, user, callback);
+            handleSetDescription(parsed.args.primary, user, callback);
             break;
         case "sell":
-            var values = params.split(",");
+            var values = parsed.args.primary.split(",");
             handleSell({ name: values[0], price: parseInt(values[1], 10), description: values[2] }, user, callback);
             break;
         case "list":
             handleList(user, callback);
             break;
         case "remove":
-            handleRemove(params, user, callback);
+            handleRemove(parsed.args.primary, user, callback);
             break;
         case "removeall":
             handleRemoveAll(user, callback);
             break;
         case "search":
-            handleSearch(params, user, callback);
+            handleSearch(parsed, user, callback);
             break;
         case "userinfo":
-            handleUserInfo(params, user, callback);
+            handleUserInfo(parsed.args.primary, user, callback);
             break;
 
         default:
@@ -70,6 +74,18 @@ function handleSms(message, user, callback) {
 }
 
 function handleSell(offer, user, callback) {
+    
+    if (!user.name || !user.location) {
+        var message = "Before you can add items ";
+
+        if (!user.name) message += "set your name with setname";    
+        if (!user.name && !user.location) message += " and ";  
+        if (!user.location) message += "set your location with setlocation";   
+
+        callback(message);
+        return;
+    }
+
     var offer = new Offer({
         name: offer.name,
         description: offer.description,
@@ -125,6 +141,13 @@ function handleSetLocation(locationString, user, callback) {
         } else {
             callback("Location could not be found - try again with a different location string");
         }
+    });
+}
+
+function handleSetName(name, user, callback) {
+    user.name = name;
+    user.save(function (err) {
+        callback("Name was updated");
     });
 }
 
