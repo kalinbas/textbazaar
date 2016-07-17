@@ -6,33 +6,37 @@ var smsService = require('../services/smsService');
 var NodeGeocoder = require('node-geocoder');
 var randomString = require("randomstring");
 
+var Parser = require('./parser');
+
 function handle(message, number, callback) {
     // check if user exists - otherwise create
-	User.findOne({ 'number': number }, function (err, user) {
-		if (err) console.log(err);
+    User.findOne({ 'number': number }, function (err, user) {
+        if (err) console.log(err);
 
-		if (user) {
-			handleSms(message, user, callback);
-		} else {
-			user = new User({ number: number, date: new Date(), code: generateRandomCode() });
-			user.save(function (err) {
-				if (err) console.log(err);
+        if (user) {
+            handleSms(message, user, callback);
+        } else {
+            user = new User({ number: number, date: new Date(), code: generateRandomCode() });
+            user.save(function (err) {
+                if (err) console.log(err);
 
-				handleSms(message, user, callback);
-			});
-		}
-	});
+                handleSms(message, user, callback);
+            });
+        }
+    });
 }
 
 function handleSms(message, user, callback) {
-    message = message.trim();
-    var index = message.indexOf(" ");
-    var cmd = message.substr(0, index > 0 ? index : message.length).toLowerCase();
-    var params = message.substr(index > 0 ? index + 1 : message.length);
 
-    switch (cmd) {
+    var parser = new Parser(message);
+    var parsed = parser.parse();
+
+    switch (parsed.command) {
+        case "?":
+            handleHelp(parsed.primary, user, callback);
+            break;
         case "setlocation":
-            handleSetLocation(params, user, callback);
+            handleSetLocation(parsed.primary, user, callback);
             break;
         case "setdescription":
             handleSetDescription(params, user, callback);
@@ -56,9 +60,7 @@ function handleSms(message, user, callback) {
         case "userinfo":
             handleUserInfo(params, user, callback);
             break;
-        case "?":
-        	handleHelp(params, user, callback);
-            break;
+
         default:
             handleUndefined(user, callback);
             break;
@@ -207,7 +209,17 @@ function handleUserInfo(code, user, callback) {
 }
 
 function handleHelp(topic, user, callback) {
-    smsService.sendSms(user.number, "Welcome to textbazaar. You may use the following commands...", callback);
+    switch (topic) {
+        case "search":
+            callback("Help about search");
+            break;
+
+            //TODO other topics
+        default:
+            callback("Welcome to textbazaar. You may use the following commands...");
+            break;
+
+    }
 }
 
 function handleUndefined(user, callback) {
@@ -215,7 +227,7 @@ function handleUndefined(user, callback) {
 }
 
 function generateRandomCode() {
-	return randomString.generate({
+    return randomString.generate({
         length: 5,
         charset: 'alphabetic'
     }).toLowerCase();

@@ -1,6 +1,6 @@
 class Parser {
   constructor(str) {
-    this.str = str;
+    this.str = str.toLowerCase();
     this.reg = /(\w+)([=<>])(\w+|"[^"]*")/g;
     this.parsed = {
       args: {} 
