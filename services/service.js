@@ -28,7 +28,7 @@ function handle(message, number, callback) {
 
 function handleSms(message, user, callback) {
 
-    var parser = new Parser(message); 
+    var parser = new Parser(message);
     var parsed = parser.parse();
 
     console.log(parsed);
@@ -81,9 +81,9 @@ function handleSell(parsed, user, callback) {
     if (!user.name || !user.location) {
         var message = "Before you can add items ";
 
-        if (!user.name) message += "set your name with setname";
+        if (!user.name) message += 'set your name with "setName"';
         if (!user.name && !user.location) message += " and ";
-        if (!user.location) message += "set your location with setlocation";
+        if (!user.location) message += 'set your location with "setLocation"';
 
         callback(message);
         return;
@@ -91,7 +91,7 @@ function handleSell(parsed, user, callback) {
 
     var name = parsed.args.primary;
     if (!name) {
-        callback('You must specify a name for your offer. Ex: "sell rice"');
+        callback('You must specify a name for your offer. Get more information with "learn sell".');
         return;
     }
 
@@ -135,7 +135,19 @@ function updateLocation(user, callback) {
     });
 }
 
+function updateName(user, callback) {
+    Offer.update({ userId: user._id }, { $set: { userName: user.name } }, { multi: true }, function (err) {
+        if (err) console.log(err);
+        callback();
+    });
+}
+
 function handleSetLocation(locationString, user, callback) {
+
+    if (!locationString) {
+        callback('You need to specify a location. Get more information with "learn setLocation".');
+        return;
+    }
 
     var options = {
         provider: 'google',
@@ -149,7 +161,7 @@ function handleSetLocation(locationString, user, callback) {
         if (!err && res && res.length > 0) {
             user.lat = res[0].latitude;
             user.lng = res[0].longitude;
-            user.location = locationString;
+            user.location = locationString.toLowerCase();
             user.save(function (err) {
                 if (err) console.log(err);
                 updateLocation(user, function () {
@@ -163,23 +175,35 @@ function handleSetLocation(locationString, user, callback) {
 }
 
 function handleSetName(name, user, callback) {
-    user.name = name;
-    user.save(function (err) {
-        callback("Name was updated");
-    });
+    if (!name) {
+        callback('You need to choose a name. Get more information with "learn setName".');
+    } else if (name.length < 4 || name.length > 12) {
+        callback('The name must be between 4 and 12 characters.');
+    } else {
+        user.name = name.toLowerCase();
+        user.save(function (err) {
+            if (err) {
+                callback("The seller name " + name + " is already in use");
+            } else {
+                updateName(user, function () {
+                    callback("Your seller name was updated");
+                });
+            }            
+        });
+    }
 }
 
 function handleSetDescription(description, user, callback) {
     user.description = description;
     user.save(function (err) {
-        callback("Description was updated");
+        callback("Your seller description was updated");
     });
 }
 
 function handleSearch(parsed, user, callback) {
 
     if (!user.location) {
-        callback("Before you search you need to set your location with the command: setlocation");
+        callback('Before you can search you need to set your location with "setlocation"');
     } else {
 
         var query = parsed.args.primary;
@@ -252,23 +276,23 @@ function handleList(user, callback) {
 function handleRemove(name, user, callback) {
     Offer.remove({ userId: user._id, name: name }, function (err) {
         if (err) console.log(err);
-        callback("The item " + name + " was removed from your store.");
+        callback(name + " was removed.");
     });
 }
 
 function handleRemoveAll(user, callback) {
     Offer.remove({ userId: user._id }, function (err) {
         if (err) console.log(err);
-        callback("All your items were removed from your store.");
+        callback("All your offers were removed.");
     });
 }
 
 function handleViewSeller(name, user, callback) {
-    User.findOne({ 'name': name }, function (err, seller) {
+    User.findOne({ 'name': name.toLowerCase() }, function (err, seller) {
         if (err) console.log(err);
 
         if (seller) {
-            callback("Phone Number: " + seller.number + "\n" + "Location: " + seller.location + "\n" + seller.description);
+            callback("Phone Number: " + seller.number + "\n" + "Location: " + seller.location + "\n" + (seller.description || ""));
         } else {
             callback("Seller with name " + name + " was not found.");
         }

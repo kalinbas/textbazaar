@@ -2,9 +2,8 @@ function getGuide(topic) {
   switch(topic) {
     case "":
       return (
-`TextBazaar learns you buy and sell with your phone.
-Text "commands" for the list of commands, then text
-"learn <command>" to learn how to use it
+`TextBazaar is an online marketplace that works without internet.
+Text "commands" for the list of commands, then "learn <command>" to learn how to use it
 Ex: "learn search"`
       )
 		case "learn":
