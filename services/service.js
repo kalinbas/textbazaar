@@ -14,12 +14,10 @@ function handleSms(message, user, callback) {
     switch (cmd) {
         case "location":
             handleLocation(params, user, callback);
-            break;
-        case "help":
+            break;        
+        default:
             handleHelp(params, user, callback);
             break;
-        default:
-            callback();
     }
 }
 
