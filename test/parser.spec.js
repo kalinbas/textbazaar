@@ -12,7 +12,8 @@ describe("parser", function() {
 
     it("should have primary (given a primary arg)", function() {
       const str = "search chicken";
-      const actual = parser(str).args.primary;
+      const parser = new Parser(str)
+      const actual = parser.parse().args.primary;
       expect(actual).to.equal("chicken");
     })
 
