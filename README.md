@@ -4,5 +4,5 @@ TextBazaar allows you to search and publish services and goods in your area with
 
 It was done during the http://uniteforhumanity.com/ Hackathon in New York at the United Nations.
 
-To try it just send an SMS to +15105674463
+To try it just send LEARN to +15105674463 
 
