@@ -1,8 +1,15 @@
 function parser(str) {
-  var command = str.slice(0, str.indexOf(' '))
+  const endOfCommand = str.indexOf(' ')
+  const command = str.slice(0, endOfCommand)
+  const remainder = str.slice(endOfCommand + 1)
+
+  const args = {
+    primary: remainder
+  }
 
   return {
     command,
+    args,
   }
 }
 

@@ -8,5 +8,11 @@ describe("parser", function() {
       const actual = parser(str).command;
       expect(actual).to.equal("search");
     });
+
+    it("should have primary (given a primary arg)", function() {
+      const str = "search chicken";
+      const actual = parser(str).args.primary;
+      expect(actual).to.equal("chicken");
+    })
   })
 });
