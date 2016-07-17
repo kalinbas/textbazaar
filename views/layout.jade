@@ -1,0 +1,32 @@
+doctype html
+html(lang='en')
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1.0')
+
+    if page
+      title=page.title
+
+    if page && page.og
+      meta(name='og:title', content=page.og.title)
+      meta(name='og:description', content=page.og.description)
+      meta(name='og:url', content=page.og.url)
+
+    link(href='https://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+    link(href='/css/materialize.css', type='text/css', rel='stylesheet')
+    link(href='/css/font-awesome.min.css', type='text/css', rel='stylesheet')
+    link(href='/css/style.css', type='text/css', rel='stylesheet')
+  body
+    header
+      nav.black.lighten-1(role='navigation')
+        .nav-wrapper.container
+          a.menu-element.brand-logo(href='/') textbazaar         
+    main
+      .container
+        .row
+          .col.s12.m12.l12
+            block content
+   
+    script(src='/js/jquery-2.1.1.min.js')
+    script(src='/js/materialize.js')
+    script(src='/js/init.js')
