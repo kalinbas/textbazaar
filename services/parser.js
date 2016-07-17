@@ -29,13 +29,15 @@ class Parser {
   }
 
   extractParams() {
-    const match = this.reg.exec(this.str)
-    if (match) {
-      const value = match[3].replace(/"/g, '')
+    let match
+    while (match = this.reg.exec(this.str)) {
+      if (match) {
+        const value = match[3].replace(/"/g, '')
 
-      this.parsed.args[match[1]] = {
-        comparison: match[2],
-        value
+        this.parsed.args[match[1]] = {
+          comparison: match[2],
+          value
+        }
       }
     }
   }
