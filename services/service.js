@@ -90,6 +90,11 @@ function handleSell(parsed, user, callback) {
     }
 
     var name = parsed.args.primary;
+    if (!name) {
+        callback('You must specify a name for your offer. Ex: "sell rice"');
+        return;
+    }
+
     var description = parsed.args["description"];
     var price = parsed.args["price"];
 
@@ -101,7 +106,7 @@ function handleSell(parsed, user, callback) {
             offer.price = (price && price.value) ? parseFloat(price.value) : null;
             offer.save(function (err) {
                 console.log(err);
-                callback("Product updated");
+                callback('Product ' + name + ' updated');
             });
         } else {
             offer = new Offer({
@@ -117,7 +122,7 @@ function handleSell(parsed, user, callback) {
             });
             offer.save(function (err) {
                 console.log(err);
-                callback("Product added");
+                callback('Product "' + name + '" added');
             });
         }
     });
@@ -152,7 +157,7 @@ function handleSetLocation(locationString, user, callback) {
                 })
             });
         } else {
-            callback("Location could not be found - try again with a different location string");
+            callback("Location could not be found - try again with a more exact location");
         }
     });
 }
@@ -202,7 +207,7 @@ function handleSearch(parsed, user, callback) {
             }
         }
         if (parsed.args["seller"]) {
-             q.userName = parsed.args["seller"].value;
+            q.userName = parsed.args["seller"].value;
         }
 
         Offer.find(
@@ -216,7 +221,7 @@ function handleSearch(parsed, user, callback) {
                 if (results && results.length > 0) {
                     var message = "";
                     for (var i = 0; i < results.length; i++) {
-                        message += results[i].name + " $" + results[i].price + " by " + results[i].userName + "\n";
+                        message += results[i].name + (results[i].price ? " $" + results[i].price : "") + " by " + results[i].userName + "\n";
                     }
                     callback(message);
                 } else {
@@ -235,7 +240,7 @@ function handleList(user, callback) {
             if (results && results.length > 0) {
                 var message = "";
                 for (var i = 0; i < results.length; i++) {
-                    message += results[i].name + " $" + results[i].price + "\n";
+                    message += results[i].name + (results[i].price ? " $" + results[i].price : "") + "\n";
                 }
                 callback(message);
             } else {
@@ -275,7 +280,7 @@ function handleHelp(topic, user, callback) {
 }
 
 function handleCommands(user, callback) {
-    callback("Welcome to textbazaar. You may use the following commands...");
+    callback(guides("commands"));
 }
 
 function handleUndefined(user, callback) {

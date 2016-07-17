@@ -23,13 +23,13 @@ router.post('/sms', function (req, res) {
 });
 
 router.get("/test", function (req, res) {
-	if (req.query.message && req.query.number) {
+	if (req.query.number) {
 		service.handle(req.query.message, req.query.number, function (message) {
 			res.send(message);
 			res.end();
 		});
 	} else {
-		res.status(400).send('Error 400: GET parameters message and number missing');
+		res.status(400).send('Error 400: mandatory GET parameter "number" is missing');
 		res.end();
 	}
 });
