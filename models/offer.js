@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
-    name: { type: String, required: true, index: { unique: false } },
+    name: { type: String, required: true },
     description: String,
     price: Number,
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -10,6 +10,8 @@ var schema = new mongoose.Schema({
     location: String,
     date: { type: Date, required: true }
 });
+
+schema.index({ userId: 1, name: 1}, { unique: true });
 
 schema.index(
     {
@@ -26,6 +28,8 @@ schema.index(
         name: "TextIndex",
         default_language: "none"
     });
+
+
 
 var Offer = mongoose.model('Offer', schema);
 module.exports = Offer;
