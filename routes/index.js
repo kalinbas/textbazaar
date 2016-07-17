@@ -29,7 +29,7 @@ router.get("/test", function (req, res) {
 			res.end();
 		});
 	} else {
-		res.status(400).send('message and number GET parameter needed');
+		res.status(400).send('Error 400: GET parameters message and number missing');
 		res.end();
 	}
 });

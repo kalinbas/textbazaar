@@ -99,7 +99,6 @@ function updateLocation(user, callback) {
         if (err) console.log(err);
         callback();
     });
-
 }
 
 function handleSetLocation(locationString, user, callback) {
@@ -118,6 +117,7 @@ function handleSetLocation(locationString, user, callback) {
             user.lng = res[0].longitude;
             user.location = locationString;
             user.save(function (err) {
+                if (err) console.log(err);
                 updateLocation(user, function () {
                     callback("Location set to " + locationString);
                 })
