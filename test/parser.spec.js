@@ -35,6 +35,17 @@ describe("parser", function() {
       expect(actual).to.deep.equal(expected)
     })
 
+    it("should extract a less than comparsion", function() {
+      const str = "search foo<5";
+      const parser = new Parser(str)
+      const actual = parser.parse().args.foo;
+      const expected = {
+        comparison: "<",
+        value: "5"
+      }
+      expect(actual).to.deep.equal(expected)
+    })
+
     it("should extract multi-word params", function() {
       const str = 'search myKey="Multiple Words"';
       const parser = new Parser(str)
