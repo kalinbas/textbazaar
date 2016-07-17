@@ -1,20 +1,13 @@
 var mongoose = require('mongoose');
 
-/*
-var schema = new mongoose.Schema({    
-    title: {type: String, required: true},
+var schema = new mongoose.Schema({
+    title: { type: String, required: true, index: { unique: true } },
     description: String,
     amount: Number,
-    lat: Number,
-	lng: Number,
-    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
-    date : {type: Date, required: true}
-}, { strict: false });
-*/
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    date: { type: Date, required: true }
+});
 
-var schema =  new mongoose.Schema({ }, { strict: false });
-
-/*
 schema.index(
     {
         title: 'text',
@@ -28,7 +21,6 @@ schema.index(
         name: "TextIndex",
         default_language: "none"
     });
-*/
 
 var Offer = mongoose.model('Offer', schema);
 module.exports = Offer;

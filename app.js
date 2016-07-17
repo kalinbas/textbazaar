@@ -5,9 +5,8 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
-var configDB = require('./config/database.js');
 var mongoose = require('mongoose');
-mongoose.connect(configDB.url);
+mongoose.connect(process.env.MONGODB_URI);
 
 var routes = require('./routes/index');
 
