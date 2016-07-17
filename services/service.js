@@ -16,7 +16,7 @@ function handle(message, number, callback) {
         if (user) {
             handleSms(message, user, callback);
         } else {
-            user = new User({ number: number, date: new Date(), code: generateRandomCode() });
+            user = new User({ number: number, date: new Date() });
             user.save(function (err) {
                 if (err) console.log(err);
 
