@@ -6,6 +6,7 @@ var Offer = require('../models/offer');
 var User = require('../models/user');
 
 var service = require('../services/service');
+var smsService = require('../services/smsService');
 
 var router = express.Router();
 
@@ -14,37 +15,15 @@ router.get('/', function (req, res) {
 });
 
 router.post('/sms', function (req, res) {
-	handleSms(req.body.Body, req.body.From, function () {
+	service.handle(req.body.Body, req.body.From, function () {
 		res.end();
 	});
 });
 
 router.get("/test", function (req, res) {
-	handleSms(req.query.message, req.query.number, function () {
+	service.handle(req.query.message, req.query.number, function () {
 		res.end();
 	});
 });
-
-function handleSms(message, number, callback) {
-	// check if user exists - otherwise create
-	User.findOne({ 'number': number }, function (err, user) {
-		if (err) console.log(err);
-
-		if (user) {
-			service.handleSms(message, user, callback);
-		} else {
-			user = new User({ number: number, date: new Date(), code: generateRandomCode() });
-			user.save(function (err) {
-				if (err) console.log(err);
-
-				service.handleSms(message, user, callback);
-			});
-		}
-	});
-}
-
-function generateRandomCode() {
-	return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
-}
 
 module.exports = router;

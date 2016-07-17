@@ -4,6 +4,25 @@ var User = require('../models/user');
 var smsService = require('../services/smsService');
 
 var NodeGeocoder = require('node-geocoder');
+var randomString = require("randomstring");
+
+function handle(message, number, callback) {
+    // check if user exists - otherwise create
+	User.findOne({ 'number': number }, function (err, user) {
+		if (err) console.log(err);
+
+		if (user) {
+			handleSms(message, user, callback);
+		} else {
+			user = new User({ number: number, date: new Date(), code: generateRandomCode() });
+			user.save(function (err) {
+				if (err) console.log(err);
+
+				handleSms(message, user, callback);
+			});
+		}
+	});
+}
 
 function handleSms(message, user, callback) {
     message = message.trim();
@@ -195,7 +214,14 @@ function handleUndefined(user, callback) {
     smsService.sendSms(user.number, "Sorry I did not understand. Check your command again or use ? to get help.", callback);
 }
 
+function generateRandomCode() {
+	return randomString.generate({
+        length: 5,
+        charset: 'alphabetic'
+    }).toLowerCase();
+}
+
 
 module.exports = {
-    handleSms: handleSms
+    handle: handle
 };
