@@ -31,33 +31,14 @@ class Parser {
   extractParams() {
     const match = this.reg.exec(this.str)
     if (match) {
+      const value = match[3].replace(/"/g, '')
+
       this.parsed.args[match[1]] = {
         comparison: match[2],
-        value: match[3]
+        value
       }
     }
   }
 }
-
-
-// function parser(str) {
-
-//   const args = {
-//     primary: remainder
-//   }
-
-//   const match = reg.exec(remainder)
-//   if (match) {
-//     args[match[1]] = {
-//       comparison: match[2],
-//       value: match[3]
-//     }
-//   }
-
-//   return {
-//     command,
-//     args,
-//   }
-// }
 
 module.exports = Parser;
