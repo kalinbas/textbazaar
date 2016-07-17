@@ -34,7 +34,7 @@ Ex: "setName Moes"
 Set your default location
 Ex: "setLocation" NYC
 You can always override your default location like so:
-"search beef location=London"
+"search beef location=Afzalpur"
 
 # guide search
 Search for a product

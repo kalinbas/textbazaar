@@ -29,13 +29,13 @@ Ex: "setName Moes"`
 `Set your default location
 Ex: "setLocation" NYC
 You can always change your default location
-Ex: "search beef location=London"`
+Ex: "search beef location=Afzalpur"`
       )
 		case "search":
       return (
 `Search for a product
 Ex: "search beef"
-Ex: "search beef location=London"
+Ex: "search beef location=Afzalpur"
 Ex: "search rice price<4"
 Ex: "search seller=Moes"`
       )
