@@ -27,16 +27,16 @@ router.get("/test", function (req, res) {
 
 function handleSms(message, number, callback) {
 	// check if user exists - otherwise create
-	User.findOne({ 'phone': number }, function (err, user) {
+	User.findOne({ 'number': number }, function (err, user) {
 		if (err) console.log(err);
 
 		if (user) {
 			service.handleSms(message, user, callback);
 		} else {
-			user = new User({ phone: number, date: new Date() });
+			user = new User({ number: number, date: new Date() });
 			user.save(function (err) {
 				if (err) console.log(err);
-				
+
 				service.handleSms(message, user, callback);
 			});
 		}

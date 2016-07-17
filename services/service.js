@@ -8,19 +8,22 @@ var NodeGeocoder = require('node-geocoder');
 function handleSms(message, user, callback) {
     message = message.trim();
     var index = message.indexOf(" ");
-    var cmd = message.substr(0, index > 0 ? index : message.length);
+    var cmd = message.substr(0, index > 0 ? index : message.length).toLowerCase();
     var params = message.substr(index > 0 ? index : message.length);
 
     switch (cmd) {
         case "location":
-            handleLocationUpdate(params, user, callback);
+            handleLocation(params, user, callback);
+            break;
+        case "help":
+            handleHelp(params, user, callback);
             break;
         default:
             callback();
     }
 }
 
-function handleLocationUpdate(locationString, user, callback) {
+function handleLocation(locationString, user, callback) {
 
     var options = {
         provider: 'google', 
@@ -37,6 +40,10 @@ function handleLocationUpdate(locationString, user, callback) {
             smsService.sendSms(user.number, "Location could not be set - try again with a different location string", callback);
         }
     });
+}
+
+function handleHelp(topic, user, callback) {
+    smsService.sendSms(user.number, "Welcome to textbazaar. You may use the following commands...", callback);
 }
 
 module.exports = {
