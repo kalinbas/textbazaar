@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
 });
 
 router.post('/sms', function (req, res) {
-	handleSms(req.Body, req.From, function () {
+	handleSms(req.body.Body, req.body.From, function () {
 		res.end();
 	});
 });
