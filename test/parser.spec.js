@@ -30,7 +30,7 @@ describe("parser", function() {
       const actual = parser.parse().args.seller;
       const expected = {
         comparison: "=",
-        value: "Moes"
+        value: "moes"
       }
       expect(actual).to.deep.equal(expected)
     })
@@ -49,10 +49,10 @@ describe("parser", function() {
     it("should extract multi-word params", function() {
       const str = 'search myKey="Multiple Words"';
       const parser = new Parser(str)
-      const actual = parser.parse().args.myKey
+      const actual = parser.parse().args.mykey
       const expected = {
         comparison: "=",
-        value: "Multiple Words"
+        value: "multiple words"
       }
       expect(actual).to.deep.equal(expected)
     })
@@ -79,6 +79,5 @@ describe("parser", function() {
       }
       expect(actual).to.deep.equal(expected)
     })
-
   })
 });
