@@ -2,6 +2,7 @@ var client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILI
 
 function sendSms(number, message, callback) {
 
+    // just send a real sms when its not on local server
     if (!process.env.NODE_ENV) {
         console.log("SMS to " + number + ": " + message);
         callback();

@@ -33,7 +33,7 @@ function handleSms(message, number, callback) {
 		if (user) {
 			service.handleSms(message, user, callback);
 		} else {
-			user = new User({ number: number, date: new Date() });
+			user = new User({ number: number, date: new Date(), code: generateRandomCode() });
 			user.save(function (err) {
 				if (err) console.log(err);
 
@@ -41,6 +41,10 @@ function handleSms(message, number, callback) {
 			});
 		}
 	});
+}
+
+function generateRandomCode() {
+	return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
 }
 
 module.exports = router;
