@@ -1,22 +1,27 @@
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
-    title: { type: String, required: true, index: { unique: true } },
+    name: { type: String, required: true, index: { unique: false } },
     description: String,
-    amount: Number,
+    price: Number,
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    lat: Number,
+	lng: Number,
+    location: String,
     date: { type: Date, required: true }
 });
 
 schema.index(
     {
-        title: 'text',
-        description: 'text'
+        name: 'text',
+        description: 'text',
+        location: 'text'
     },
     {
         weights: {
-            title: 10,
-            description: 5
+            name: 10,
+            description: 5,
+            location: 10
         },
         name: "TextIndex",
         default_language: "none"
