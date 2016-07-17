@@ -1,13 +1,31 @@
+class Parser {
+  constructor(str) {
+    this.str = str;
+    this.reg = /(\w+)([=<>])(\w+|"[^"]*")/g;
+    this.response = {
+      args: {} 
+    };
+  }
+  
+  parse() {
+    this.extractCommand();
+    return this.response
+  }
+
+  extractCommand() {
+    const endOfCommand = this.str.indexOf(' ')
+    this.response.command = this.str.slice(0, endOfCommand)
+    this.str = this.str.slice(endOfCommand + 1)
+  }
+}
+
+
 function parser(str) {
-  const endOfCommand = str.indexOf(' ')
-  const command = str.slice(0, endOfCommand)
-  const remainder = str.slice(endOfCommand + 1)
 
   const args = {
     primary: remainder
   }
 
-  const reg = /(\w+)([=<>])(\w+|"[^"]*")/g
   const match = reg.exec(remainder)
   if (match) {
     args[match[1]] = {
@@ -22,4 +40,4 @@ function parser(str) {
   }
 }
 
-module.exports = parser;
+module.exports = Parser;

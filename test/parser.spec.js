@@ -1,11 +1,12 @@
 const expect = require('chai').expect;
-const parser = require('../services/parser');
+const Parser = require('../services/parser');
 
 describe("parser", function() {
   describe("return an object", function() {
-    it("should have a command and args", function() {
+    it("should extract a command", function() {
       const str = "search chicken";
-      const actual = parser(str).command;
+      const parser = new Parser(str)
+      const actual = parser.parse().command;
       expect(actual).to.equal("search");
     });
 
@@ -15,6 +16,11 @@ describe("parser", function() {
       expect(actual).to.equal("chicken");
     })
 
+    it("should not have a primary (if not given one)", function() {
+      const str = "search seller=Moes";
+      const actual = parser(str).args.primary;
+      expect(actual).to.equal(undefined)
+    })
 
     it("should extract a param (given a param)", function() {
       const str = "search seller=Moes";
