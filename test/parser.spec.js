@@ -3,6 +3,20 @@ const Parser = require('../services/parser');
 
 describe("parser", function() {
   describe("return an object", function() {
+    it("should extract a solitary command", function() {
+      const str = "foo"
+      const parser = new Parser(str)
+      const actual = parser.parse().command
+      expect(actual).to.equal("foo")
+    })
+
+    it("should handle a solitary single character", function() {
+      const str = "?"
+      const parser = new Parser(str)
+      const actual = parser.parse().command
+      expect(actual).to.equal("?")
+    })
+
     it("should extract a command", function() {
       const str = "search chicken";
       const parser = new Parser(str)
