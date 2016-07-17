@@ -5,7 +5,7 @@ var schema = new mongoose.Schema({
     description: String,
     price: Number,
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    code: { type: String, required: true },
+    userName: { type: String, required: true },
     lat: Number,
 	lng: Number,
     location: String,

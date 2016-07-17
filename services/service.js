@@ -4,7 +4,6 @@ var User = require('../models/user');
 var smsService = require('../services/smsService');
 
 var NodeGeocoder = require('node-geocoder');
-var randomString = require("randomstring");
 
 var Parser = require('./parser');
 
@@ -74,13 +73,13 @@ function handleSms(message, user, callback) {
 }
 
 function handleSell(offer, user, callback) {
-    
+
     if (!user.name || !user.location) {
         var message = "Before you can add items ";
 
-        if (!user.name) message += "set your name with setname";    
-        if (!user.name && !user.location) message += " and ";  
-        if (!user.location) message += "set your location with setlocation";   
+        if (!user.name) message += "set your name with setname";
+        if (!user.name && !user.location) message += " and ";
+        if (!user.location) message += "set your location with setlocation";
 
         callback(message);
         return;
@@ -95,18 +94,18 @@ function handleSell(offer, user, callback) {
         lat: user.lat,
         lng: user.lng,
         location: user.location,
-        code: user.code
+        userName: user.name
     });
 
     offer.save(function (err) {
         if (!err) {
-             callback("Product added..");
+            callback("Product added..");
         } else {
-            console.log(err);       
+            console.log(err);
 
             // probably error 11000 - better error handling needed
-            callback("Product already exists..");            
-        }       
+            callback("Product already exists..");
+        }
     });
 }
 
@@ -179,7 +178,7 @@ function handleSearch(query, user, callback) {
                 if (results && results.length > 0) {
                     var message = "";
                     for (var i = 0; i < results.length; i++) {
-                        message += results[i].code + " - " + results[i].name + " $" + results[i].price + "\n";
+                        message += results[i].name + " $" + results[i].price + " by " + results[i].userName + "\n";
                     }
                     callback(message);
                 } else {
@@ -221,14 +220,14 @@ function handleRemoveAll(user, callback) {
     });
 }
 
-function handleUserInfo(code, user, callback) {
-    User.findOne({ 'code': code }, function (err, seller) {
+function handleUserInfo(name, user, callback) {
+    User.findOne({ 'name': name }, function (err, seller) {
         if (err) console.log(err);
 
         if (seller) {
             callback("Phone Number: " + seller.number + "\n" + "Location: " + seller.location + "\n" + seller.description);
         } else {
-            callback("Seller with code " + code + " was not found.");
+            callback("Seller with name " + name + " was not found.");
         }
     });
 }
@@ -239,7 +238,7 @@ function handleHelp(topic, user, callback) {
             callback("Help about search");
             break;
 
-            //TODO other topics
+        //TODO other topics
         default:
             callback("Welcome to textbazaar. You may use the following commands...");
             break;
@@ -251,12 +250,6 @@ function handleUndefined(user, callback) {
     callback("Sorry I did not understand. Please correct your command or use ? to get help.");
 }
 
-function generateRandomCode() {
-    return randomString.generate({
-        length: 5,
-        charset: 'alphabetic'
-    }).toLowerCase();
-}
 
 module.exports = {
     handle: handle
