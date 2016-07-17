@@ -57,8 +57,16 @@ describe("parser", function() {
       expect(actual).to.deep.equal(expected)
     })
 
-    xit("should extract a primary & multiple params", function() {
-
+    it("should extract a primary & multiple params", function() {
+      const str = "search lol wut one=foo two=bar"
+      const parser = new Parser(str)
+      const actual = parser.parse().args
+      const expected = {
+        primary: "lol wut",
+        one: { comparison: "=", value: "foo" },
+        two: { comparison: "=", value: "bar" }
+      }
+      expect(actual).to.deep.equal(expected)
     })
 
   })

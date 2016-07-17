@@ -26,6 +26,10 @@ class Parser {
       this.parsed.args.primary = this.str;
       this.str = ""
     }
+    else if (firstParamIndex > 0) {
+      const primary = this.str.slice(0, firstParamIndex - 1)
+      this.parsed.args.primary = primary
+    }
   }
 
   extractParams() {
