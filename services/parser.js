@@ -10,6 +10,7 @@ class Parser {
   parse() {
     this.extractCommand();
     this.extractPrimary();
+    this.extractParams();
     return this.parsed;
   }
 
@@ -23,34 +24,40 @@ class Parser {
     const firstParamIndex = this.str.search(this.reg);
     if (firstParamIndex === -1) {
       this.parsed.args.primary = this.str;
+      this.str = ""
     }
-    // else {}
-    // if (firstParamIndex - 1 > 0) {
-      // this.parsed.args.primary = this.str.slice(0, firstParamIndex - 1)
-    // }
-    // this.parsed.args.primary = firstParamIndex
+  }
+
+  extractParams() {
+    const match = this.reg.exec(this.str)
+    if (match) {
+      this.parsed.args[match[1]] = {
+        comparison: match[2],
+        value: match[3]
+      }
+    }
   }
 }
 
 
-function parser(str) {
+// function parser(str) {
 
-  const args = {
-    primary: remainder
-  }
+//   const args = {
+//     primary: remainder
+//   }
 
-  const match = reg.exec(remainder)
-  if (match) {
-    args[match[1]] = {
-      comparison: match[2],
-      value: match[3]
-    }
-  }
+//   const match = reg.exec(remainder)
+//   if (match) {
+//     args[match[1]] = {
+//       comparison: match[2],
+//       value: match[3]
+//     }
+//   }
 
-  return {
-    command,
-    args,
-  }
-}
+//   return {
+//     command,
+//     args,
+//   }
+// }
 
 module.exports = Parser;

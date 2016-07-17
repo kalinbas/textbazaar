@@ -19,13 +19,15 @@ describe("parser", function() {
 
     it("should not have a primary (if not given one)", function() {
       const str = "search seller=Moes";
-      const actual = parser(str).args.primary;
+      const parser = new Parser(str)
+      const actual = parser.parse().args.primary;
       expect(actual).to.equal(undefined)
     })
 
     it("should extract a param (given a param)", function() {
       const str = "search seller=Moes";
-      const actual = parser(str).args.seller;
+      const parser = new Parser(str)
+      const actual = parser.parse().args.seller;
       const expected = {
         comparison: "=",
         value: "Moes"
