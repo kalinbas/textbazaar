@@ -1,5 +1,5 @@
-function giveGuidance(parsed) {
-  switch(parsed.command) {
+function giveGuidance(topic) {
+  switch(topic) {
     case "search":
       return (
 `Search for a product
@@ -23,3 +23,5 @@ Ex: "? search"`
       )
   }
 }
+
+module.exports = giveGuidance;

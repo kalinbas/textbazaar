@@ -6,6 +6,7 @@ var smsService = require('../services/smsService');
 var NodeGeocoder = require('node-geocoder');
 
 var Parser = require('./parser');
+var guides = require('./guides');
 
 function handle(message, number, callback) {
     // check if user exists - otherwise create
@@ -51,8 +52,7 @@ function handleSms(message, user, callback) {
             handleSetDescription(parsed.args.primary, user, callback);
             break;
         case "sell":
-            var values = parsed.args.primary.split(",");
-            handleSell({ name: values[0], price: parseInt(values[1], 10), description: values[2] }, user, callback);
+            handleSell(parsed, user, callback);
             break;
         case "list":
             handleList(user, callback);
@@ -66,8 +66,8 @@ function handleSms(message, user, callback) {
         case "search":
             handleSearch(parsed, user, callback);
             break;
-        case "description":
-            handleDescription(parsed.args.primary, user, callback);
+        case "viewseller":
+            handleViewSeller(parsed.args.primary, user, callback);
             break;
 
         default:
@@ -76,7 +76,7 @@ function handleSms(message, user, callback) {
     }
 }
 
-function handleSell(offer, user, callback) {
+function handleSell(parsed, user, callback) {
 
     if (!user.name || !user.location) {
         var message = "Before you can add items ";
@@ -89,26 +89,36 @@ function handleSell(offer, user, callback) {
         return;
     }
 
-    var offer = new Offer({
-        name: offer.name,
-        description: offer.description,
-        price: offer.price,
-        date: new Date(),
-        userId: user._id,
-        lat: user.lat,
-        lng: user.lng,
-        location: user.location,
-        userName: user.name
-    });
+    var name = parsed.args.primary;
+    var description = parsed.args["description"];
+    var price = parsed.args["price"];
 
-    offer.save(function (err) {
-        if (!err) {
-            callback("Product added..");
+    Offer.findOne({ 'name': name, 'userId': user._id }, function (err, offer) {
+        if (err) console.log(err);
+
+        if (offer) {
+            offer.description = (description && description.value) ? description.value : null;
+            offer.price = (price && price.value) ? parseFloat(price.value) : null;
+            offer.save(function (err) {
+                console.log(err);
+                callback("Product updated");
+            });
         } else {
-            console.log(err);
-
-            // probably error 11000 - better error handling needed
-            callback("Product already exists..");
+            offer = new Offer({
+                name: name,
+                description: description,
+                price: price,
+                date: new Date(),
+                userId: user._id,
+                lat: user.lat,
+                lng: user.lng,
+                location: user.location,
+                userName: user.name
+            });
+            offer.save(function (err) {
+                console.log(err);
+                callback("Product added");
+            });
         }
     });
 }
@@ -224,7 +234,7 @@ function handleRemoveAll(user, callback) {
     });
 }
 
-function handleDescription(name, user, callback) {
+function handleViewSeller(name, user, callback) {
     User.findOne({ 'name': name }, function (err, seller) {
         if (err) console.log(err);
 
@@ -237,27 +247,15 @@ function handleDescription(name, user, callback) {
 }
 
 function handleHelp(topic, user, callback) {
-    switch (topic) {
-        case "search":
-            callback("Help about search");
-            break;
-
-        //TODO other topics
-        default:
-            callback("Welcome to textbazaar. You may use the following commands...");
-            break;
-
-    }
+    callback(guides(topic));
 }
 
 function handleCommands(user, callback) {
-
-    //TODO other topics
     callback("Welcome to textbazaar. You may use the following commands...");
 }
 
 function handleUndefined(user, callback) {
-    callback("Sorry I did not understand. Please correct your command or use ? to get help.");
+    callback("Please correct your command or use \"learn\" to get help.");
 }
 
 
